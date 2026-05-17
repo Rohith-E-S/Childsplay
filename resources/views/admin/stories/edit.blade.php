@@ -68,6 +68,12 @@
                 </button>
             </div>
         </form>
+
+        <div class="mt-4 pt-4 border-t border-gray-300">
+            <a href="{{ route('admin.stories.pages.manage', $story) }}" class="block w-full text-center px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-md transition-all">
+                📖 Manage Story Pages
+            </a>
+        </div>
         
         <form action="{{ route('admin.stories.destroy', $story) }}" method="POST" class="mt-4 text-center">
             @csrf

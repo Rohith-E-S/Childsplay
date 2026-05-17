@@ -28,27 +28,33 @@
 
     <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
-            <h3 class="text-lg font-bold text-gray-900 font-poppins">Recent Stories</h3>
+            <h3 class="text-lg font-bold text-gray-900 font-poppins">All Stories ({{ count($stories) }})</h3>
             <a href="{{ route('admin.stories.create') }}" class="px-4 py-2 bg-purple-600 text-white text-sm font-bold rounded-lg hover:bg-purple-500 shadow transition-colors">+ Add Story</a>
         </div>
         <div class="divide-y divide-gray-100">
-            @foreach($recentStories as $story)
+            @forelse($stories as $story)
             <div class="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 flex-1">
                     <img src="{{ $story->cover_image }}" class="w-16 h-12 rounded object-cover shadow-sm">
-                    <div>
+                    <div class="flex-1">
                         <p class="text-sm font-bold text-gray-900">{{ $story->title }}</p>
-                        <p class="text-xs text-gray-500">{{ $story->author }}</p>
+                        <p class="text-xs text-gray-500">{{ $story->author }} • {{ $story->category->name }}</p>
                     </div>
                 </div>
                 <div class="flex gap-2 items-center">
                     <span class="px-3 py-1 text-xs font-bold rounded-full {{ $story->is_published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' }}">
                         {{ $story->is_published ? 'Published' : 'Draft' }}
                     </span>
-                    <a href="{{ route('admin.stories.edit', $story) }}" class="text-gray-400 hover:text-purple-600 font-medium text-sm transition-colors ml-4">Edit</a>
+                    <a href="{{ route('admin.stories.pages.manage', $story) }}" class="text-blue-500 hover:text-blue-700 font-medium text-sm transition-colors">📖 Pages</a>
+                    <a href="{{ route('admin.stories.edit', $story) }}" class="text-gray-400 hover:text-purple-600 font-medium text-sm transition-colors ml-2">✏️ Edit</a>
                 </div>
             </div>
-            @endforeach
+            @empty
+            <div class="px-6 py-12 text-center">
+                <p class="text-gray-500 font-semibold mb-4">📚 No stories yet</p>
+                <a href="{{ route('admin.stories.create') }}" class="px-4 py-2 bg-purple-600 text-white text-sm font-bold rounded-lg hover:bg-purple-500 inline-block">Create Your First Story</a>
+            </div>
+            @endforelse
         </div>
     </div>
 </div>

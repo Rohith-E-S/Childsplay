@@ -67,6 +67,8 @@
                 </button>
             </div>
         </form>
+        
+        <p class="text-center text-gray-600 text-sm mt-4">After creating, you'll be taken to add story pages</p>
     </div>
 </div>
 @endsection
