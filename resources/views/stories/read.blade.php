@@ -11,6 +11,7 @@
         .page-content { font-size: 2rem; line-height: 1.6; color: #2d3748; }
         .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body class="min-h-screen flex flex-col">
     <nav class="glass-nav fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center border-b border-gray-200">
@@ -19,7 +20,7 @@
         </a>
         <h1 class="font-bold text-xl text-gray-800 font-sans hidden sm:block">{{ $story->title }}</h1>
         <div class="flex gap-4">
-            <button class="bg-purple-100 text-purple-700 p-3 rounded-full hover:bg-purple-200 transition-colors shadow-sm" title="Play Audio">🔊</button>
+            <button id="btn-narrate" class="bg-purple-100 text-purple-700 p-3 rounded-full hover:bg-purple-200 transition-colors shadow-sm" title="Toggle Narration">🔊</button>
             <button class="bg-yellow-100 text-yellow-700 p-3 rounded-full hover:bg-yellow-200 transition-colors shadow-sm" title="Toggle Fullscreen" onclick="document.documentElement.requestFullscreen()">🔲</button>
         </div>
     </nav>
@@ -47,15 +48,46 @@
                     document.addEventListener('DOMContentLoaded', () => {
                         const pages = @json($story->pages);
                         let currentPageIndex = 0;
+                        let isNarrating = false;
+                        let synth = window.speechSynthesis;
                         
                         const imgEl = document.getElementById('page-image');
                         const contentEl = document.getElementById('page-content');
                         const indicatorEl = document.getElementById('page-indicator');
                         const btnPrev = document.getElementById('btn-prev');
                         const btnNext = document.getElementById('btn-next');
+                        const btnNarrate = document.getElementById('btn-narrate');
+                        
+                        // Create audio element for page turns
+                        const pageTurnSound = new Audio('https://actions.google.com/sounds/v1/foley/book_page_turn.ogg');
+
+                        function animatePageTransition(callback) {
+                            // Fade out
+                            imgEl.style.opacity = '0';
+                            contentEl.style.opacity = '0';
+                            contentEl.style.transform = 'translateY(10px)';
+                            
+                            setTimeout(() => {
+                                callback();
+                                // Fade in
+                                imgEl.style.opacity = '1';
+                                contentEl.style.opacity = '1';
+                                contentEl.style.transform = 'translateY(0)';
+                                
+                                // Play page turn sound
+                                pageTurnSound.currentTime = 0;
+                                pageTurnSound.play().catch(e => console.log('Audio play failed:', e));
+                            }, 300);
+                        }
 
                         function updatePage() {
                             const page = pages[currentPageIndex];
+                            
+                            // Stop current narration if running
+                            if (isNarrating) {
+                                synth.cancel();
+                                playNarration(page.content);
+                            }
                             
                             // Update content
                             imgEl.src = page.image_url;
@@ -85,23 +117,91 @@
                             }
                         }
 
+                        function playNarration(text) {
+                            if (!text) return;
+                            const utterance = new SpeechSynthesisUtterance(text);
+                            utterance.rate = 0.9; // Slightly slower for kids
+                            utterance.pitch = 1.1; // Slightly higher pitch
+                            
+                            // Try to find a friendly voice
+                            const voices = synth.getVoices();
+                            const friendlyVoice = voices.find(v => v.name.includes('Google') || v.name.includes('Samantha'));
+                            if (friendlyVoice) utterance.voice = friendlyVoice;
+                            
+                            synth.speak(utterance);
+                        }
+
                         btnPrev.addEventListener('click', () => {
                             if (currentPageIndex > 0) {
-                                currentPageIndex--;
-                                updatePage();
+                                animatePageTransition(() => {
+                                    currentPageIndex--;
+                                    updatePage();
+                                });
                             }
                         });
 
                         btnNext.addEventListener('click', () => {
                             if (currentPageIndex < pages.length - 1) {
-                                currentPageIndex++;
-                                updatePage();
+                                animatePageTransition(() => {
+                                    currentPageIndex++;
+                                    updatePage();
+                                });
                             } else {
-                                // Redirect or show completion
-                                alert('Yay! You finished the story! 🎉');
-                                window.location.href = "{{ route('stories.show', $story) }}";
+                                synth.cancel();
+                                
+                                // Play cheering sound
+                                const cheerSound = new Audio('https://actions.google.com/sounds/v1/crowds/kids_cheering.ogg');
+                                cheerSound.play().catch(e => console.log('Audio play failed:', e));
+
+                                // Confetti animation
+                                var duration = 3 * 1000;
+                                var end = Date.now() + duration;
+
+                                (function frame() {
+                                    confetti({
+                                        particleCount: 5,
+                                        angle: 60,
+                                        spread: 55,
+                                        origin: { x: 0 },
+                                        colors: ['#a864fd', '#29cdff', '#78ff44', '#ff718d', '#fdff6a']
+                                    });
+                                    confetti({
+                                        particleCount: 5,
+                                        angle: 120,
+                                        spread: 55,
+                                        origin: { x: 1 },
+                                        colors: ['#a864fd', '#29cdff', '#78ff44', '#ff718d', '#fdff6a']
+                                    });
+
+                                    if (Date.now() < end) {
+                                        requestAnimationFrame(frame);
+                                    }
+                                }());
+
+                                // Redirect after animation
+                                setTimeout(() => {
+                                    window.location.href = "{{ route('stories.show', $story) }}";
+                                }, 3500);
                             }
                         });
+                        
+                        btnNarrate.addEventListener('click', () => {
+                            if (isNarrating) {
+                                synth.cancel();
+                                isNarrating = false;
+                                btnNarrate.classList.replace('bg-purple-500', 'bg-purple-100');
+                                btnNarrate.classList.replace('text-white', 'text-purple-700');
+                            } else {
+                                isNarrating = true;
+                                btnNarrate.classList.replace('bg-purple-100', 'bg-purple-500');
+                                btnNarrate.classList.replace('text-purple-700', 'text-white');
+                                playNarration(pages[currentPageIndex].content);
+                            }
+                        });
+
+                        // Set initial transition styles
+                        imgEl.style.transition = 'opacity 0.3s ease-in-out';
+                        contentEl.style.transition = 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out';
                     });
                 </script>
             @else
