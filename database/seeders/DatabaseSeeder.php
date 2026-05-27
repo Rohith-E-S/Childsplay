@@ -56,5 +56,8 @@ class DatabaseSeeder extends Seeder
 
         // Achievements
         Achievement::factory()->count(5)->create();
+
+        // Demo stories and pages
+        $this->call(DemoStoriesSeeder::class);
     }
 }

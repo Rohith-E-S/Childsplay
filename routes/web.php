@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
 
     // Parent features
     Route::resource('children', ChildProfileController::class);
+    Route::post('/children/{child}/streak/increment', [ChildProfileController::class, 'incrementStreak'])->name('children.streak.increment');
 
     // Stories
     Route::get('/stories', [StoryController::class, 'index'])->name('stories.index');

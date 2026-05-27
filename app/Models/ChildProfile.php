@@ -7,11 +7,12 @@ class ChildProfile extends Model {
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'name', 'age', 'reading_level', 'interests', 'avatar_url'
+        'user_id', 'name', 'age', 'reading_level', 'interests', 'avatar_url', 'reading_streak'
     ];
 
     protected $casts = [
         'interests' => 'array',
+        'reading_streak' => 'integer',
     ];
 
     public function user() {

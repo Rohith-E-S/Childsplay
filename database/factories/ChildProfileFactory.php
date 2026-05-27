@@ -11,6 +11,7 @@ class ChildProfileFactory extends Factory {
             'reading_level' => fake()->randomElement(['Beginner', 'Intermediate', 'Advanced']),
             'interests' => fake()->randomElements(['Animals', 'Space', 'Magic', 'Science', 'Adventure'], 2),
             'avatar_url' => 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=' . fake()->word(),
+            'reading_streak' => fake()->numberBetween(0, 7),
         ];
     }
 }
