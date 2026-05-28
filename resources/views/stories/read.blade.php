@@ -4,44 +4,40 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reading: {{ $story->title }}</title>
-    <link href="https://fonts.bunny.net/css?family=comic-neue:400,700|quicksand:500,700" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=lora:400,500,600,700|outfit:400,500,650,700" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
-        body { font-family: 'Comic Neue', cursive; background-color: #fdfbf7; }
-        .page-content { font-size: 2rem; line-height: 1.6; color: #2d3748; }
-        .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        body { font-family: 'Outfit', sans-serif; background-color: #FAF8F6; }
+        .page-content { font-family: 'Lora', Georgia, serif; font-size: 2.25rem; line-height: 1.6; color: #1c1917; max-width: 44rem; }
+        .glass-nav { background: #FFFFFF; border-b: 1px solid #EAE6DF; }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
-<body class="min-h-screen flex flex-col">
-    <nav class="glass-nav fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center border-b border-gray-200">
-        <a href="{{ route('stories.show', $story) }}" class="flex items-center gap-2 text-gray-600 hover:text-purple-600 font-bold font-sans text-lg transition-colors">
-            ⬅️ Back
+<body class="min-h-screen flex flex-col bg-[#FDFBF7]">
+    <nav class="glass-nav fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center">
+        <a href="{{ route('stories.show', $story) }}" class="flex items-center gap-2 text-stone-600 hover:text-stone-900 font-bold text-sm transition-colors">
+            ← Back to Details
         </a>
-        <h1 class="font-bold text-xl text-gray-800 font-sans hidden sm:block">{{ $story->title }}</h1>
-        <div class="flex gap-4">
-            <button id="btn-narrate" class="bg-purple-100 text-purple-700 p-3 rounded-full hover:bg-purple-200 transition-colors shadow-sm" title="Toggle Narration">🔊</button>
-            <button class="bg-yellow-100 text-yellow-700 p-3 rounded-full hover:bg-yellow-200 transition-colors shadow-sm" title="Toggle Fullscreen" onclick="document.documentElement.requestFullscreen()">🔲</button>
+        <h1 class="font-extrabold text-base text-stone-900 font-serif-book hidden sm:block">{{ $story->title }}</h1>
+        <div class="flex gap-3">
+            <button id="btn-narrate" class="bg-stone-100 hover:bg-stone-200 text-stone-750 px-3.5 py-1.5 rounded-lg text-xs font-bold border border-stone-200 shadow-sm transition-colors" title="Toggle Narration">🔊 Narration</button>
+            <button class="bg-stone-100 hover:bg-stone-200 text-stone-750 px-3.5 py-1.5 rounded-lg text-xs font-bold border border-stone-200 shadow-sm transition-colors" title="Toggle Fullscreen" onclick="document.documentElement.requestFullscreen()">🔲 Fullscreen</button>
         </div>
     </nav>
 
     <main class="flex-grow flex items-center justify-center pt-24 pb-12 px-4 relative overflow-hidden" id="reading-container">
-        <!-- Decoration -->
-        <div class="absolute -top-20 -left-20 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
-        <div class="absolute top-40 -right-20 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob animation-delay-2000"></div>
-
-        <div class="max-w-4xl w-full bg-white rounded-[3rem] shadow-2xl overflow-hidden relative z-10 border-4 border-gray-50 flex flex-col min-h-[600px]">
+        <div class="max-w-4xl w-full bg-white rounded-xl shadow-md overflow-hidden relative z-10 border border-stone-200/80 flex flex-col min-h-[600px]">
             @if($story->pages->count() > 0)
                 <div class="flex-grow flex flex-col">
-                    <img id="page-image" src="{{ $story->pages->first()->image_url }}" class="w-full h-80 object-cover border-b-4 border-dashed border-gray-100">
+                    <img id="page-image" src="{{ $story->pages->first()->image_url }}" class="w-full h-80 object-cover border-b border-stone-200/80">
                     <div class="p-8 sm:p-12 flex-grow flex items-center justify-center text-center">
                         <p id="page-content" class="page-content font-bold">{{ $story->pages->first()->content ?? 'Once upon a time...' }}</p>
                     </div>
                 </div>
-                <div class="bg-gray-50 p-6 flex justify-between items-center border-t border-gray-100">
-                    <button id="btn-prev" class="px-8 py-3 bg-gray-200 text-gray-500 rounded-full font-bold font-sans opacity-50 cursor-not-allowed text-lg transition-all" disabled>Previous</button>
-                    <span id="page-indicator" class="font-sans font-bold text-gray-500 text-lg">Page 1 of {{ $story->pages->count() }}</span>
-                    <button id="btn-next" class="px-8 py-3 bg-purple-500 hover:bg-purple-400 text-white rounded-full font-bold font-sans shadow-md transform hover:scale-105 transition-all text-lg">Next ➡️</button>
+                <div class="bg-stone-50 p-6 flex justify-between items-center border-t border-stone-200/80 font-outfit">
+                    <button id="btn-prev" class="px-6 py-2.5 bg-stone-150 text-stone-400 rounded-lg font-bold opacity-50 cursor-not-allowed text-base transition-colors border border-stone-200/50" disabled>Previous</button>
+                    <span id="page-indicator" class="font-bold text-stone-500 text-base">Page 1 of {{ $story->pages->count() }}</span>
+                    <button id="btn-next" class="px-6 py-2.5 bg-indigo-900 hover:bg-indigo-950 text-white rounded-lg font-bold shadow-sm transition-colors text-base">Next →</button>
                 </div>
 
                 <script>
@@ -98,22 +94,23 @@
                             if (currentPageIndex === 0) {
                                 btnPrev.disabled = true;
                                 btnPrev.classList.add('opacity-50', 'cursor-not-allowed');
-                                btnPrev.classList.remove('hover:bg-gray-300', 'transform', 'hover:scale-105', 'shadow-md');
+                                btnPrev.classList.remove('hover:bg-stone-200', 'text-stone-750', 'shadow-sm', 'bg-stone-100');
+                                btnPrev.classList.add('bg-stone-150', 'text-stone-400');
                             } else {
                                 btnPrev.disabled = false;
-                                btnPrev.classList.remove('opacity-50', 'cursor-not-allowed');
-                                btnPrev.classList.add('hover:bg-gray-300', 'transform', 'hover:scale-105', 'shadow-md');
+                                btnPrev.classList.remove('opacity-50', 'cursor-not-allowed', 'bg-stone-150', 'text-stone-400');
+                                btnPrev.classList.add('hover:bg-stone-200', 'text-stone-750', 'shadow-sm', 'bg-stone-100');
                             }
 
                             // Update Next button state
                             if (currentPageIndex === pages.length - 1) {
                                 btnNext.textContent = 'Finish 🏆';
-                                btnNext.classList.replace('bg-purple-500', 'bg-green-500');
-                                btnNext.classList.replace('hover:bg-purple-400', 'hover:bg-green-400');
+                                btnNext.classList.replace('bg-indigo-900', 'bg-emerald-800');
+                                btnNext.classList.replace('hover:bg-indigo-950', 'hover:bg-emerald-900');
                             } else {
-                                btnNext.textContent = 'Next ➡️';
-                                btnNext.classList.replace('bg-green-500', 'bg-purple-500');
-                                btnNext.classList.replace('hover:bg-green-400', 'hover:bg-purple-400');
+                                btnNext.textContent = 'Next →';
+                                btnNext.classList.replace('bg-emerald-800', 'bg-indigo-900');
+                                btnNext.classList.replace('hover:bg-emerald-900', 'hover:bg-indigo-950');
                             }
                         }
 
@@ -189,12 +186,12 @@
                             if (isNarrating) {
                                 synth.cancel();
                                 isNarrating = false;
-                                btnNarrate.classList.replace('bg-purple-500', 'bg-purple-100');
-                                btnNarrate.classList.replace('text-white', 'text-purple-700');
+                                btnNarrate.classList.replace('bg-indigo-900', 'bg-stone-100');
+                                btnNarrate.classList.replace('text-white', 'text-stone-750');
                             } else {
                                 isNarrating = true;
-                                btnNarrate.classList.replace('bg-purple-100', 'bg-purple-500');
-                                btnNarrate.classList.replace('text-purple-700', 'text-white');
+                                btnNarrate.classList.replace('bg-stone-100', 'bg-indigo-900');
+                                btnNarrate.classList.replace('text-stone-750', 'text-white');
                                 playNarration(pages[currentPageIndex].content);
                             }
                         });
@@ -205,7 +202,7 @@
                     });
                 </script>
             @else
-                <div class="p-12 text-center text-2xl font-bold text-gray-500 flex-grow flex items-center justify-center">
+                <div class="p-12 text-center text-xl font-bold text-stone-500 flex-grow flex items-center justify-center">
                     Story pages coming soon! ✨
                 </div>
             @endif

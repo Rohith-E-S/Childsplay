@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ChildProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -45,6 +46,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/stories/{story}/pages/{page}', [StoryPageController::class, 'update'])->name('stories.pages.update');
         Route::delete('/stories/{story}/pages/{page}', [StoryPageController::class, 'destroy'])->name('stories.pages.destroy');
         Route::post('/stories/{story}/pages/reorder', [StoryPageController::class, 'reorder'])->name('stories.pages.reorder');
+
+        // Admin category management
+        Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
     });
 });
 

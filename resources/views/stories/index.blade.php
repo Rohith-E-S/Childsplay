@@ -1,42 +1,42 @@
 @extends('layouts.app')
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="text-center mb-16">
-        <h1 class="text-5xl font-extrabold text-gray-900 font-poppins mb-4">The Magical Library 📖</h1>
-        <p class="text-xl font-medium text-gray-600">Choose your next big adventure.</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-paper">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-stone-900 font-serif-book mb-3">The Story Library</h1>
+        <p class="text-lg font-medium text-stone-600 font-outfit">Explore classic illustrated stories curated for early reading levels.</p>
     </div>
 
     <!-- Filters -->
-    <div class="glass rounded-full p-2 mb-12 flex flex-wrap gap-2 justify-center shadow-md">
-        <a href="{{ route('stories.index') }}" class="px-6 py-2 rounded-full font-bold text-sm {{ !request('category') ? 'bg-purple-600 text-white shadow' : 'text-gray-600 hover:bg-white' }} transition-colors">All Stories</a>
+    <div class="flex flex-wrap gap-2 justify-center mb-12 border-b border-book pb-4 font-outfit">
+        <a href="{{ route('stories.index') }}" class="px-5 py-2 rounded-lg font-bold text-sm transition-colors {{ !request('category') ? 'bg-indigo-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100' }}">All Stories</a>
         @foreach($categories as $category)
-            <a href="{{ route('stories.index', ['category' => $category->slug]) }}" class="px-6 py-2 rounded-full font-bold text-sm {{ request('category') === $category->slug ? 'bg-purple-600 text-white shadow' : 'text-gray-600 hover:bg-white' }} transition-colors">{{ $category->name }}</a>
+            <a href="{{ route('stories.index', ['category' => $category->slug]) }}" class="px-5 py-2 rounded-lg font-bold text-sm transition-colors {{ request('category') === $category->slug ? 'bg-indigo-900 text-white shadow-sm' : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100' }}">{{ $category->name }}</a>
         @endforeach
     </div>
 
     <!-- Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         @foreach($stories as $story)
-        <a href="{{ route('stories.show', $story) }}" class="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 group border border-gray-100 flex flex-col h-full">
-            <div class="relative h-56 overflow-hidden">
-                <img src="{{ $story->cover_image }}" alt="{{ $story->title }}" class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700">
-                <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-purple-700 shadow-sm">
+        <a href="{{ route('stories.show', $story) }}" class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-stone-200/70 transition-all duration-300 group flex flex-col h-full">
+            <div class="relative h-56 overflow-hidden bg-stone-100 border-b border-stone-100">
+                <img src="{{ $story->cover_image }}" alt="{{ $story->title }}" class="object-cover w-full h-full group-hover:scale-[1.02] transition-transform duration-500">
+                <div class="absolute top-4 left-4 bg-white/95 px-2.5 py-0.5 rounded text-xs font-bold text-stone-700 shadow-sm border border-stone-100 font-outfit">
                     {{ $story->category->name }}
                 </div>
             </div>
-            <div class="p-6 flex flex-col flex-grow">
-                <h3 class="text-2xl font-bold text-gray-900 mb-2 font-poppins line-clamp-2">{{ $story->title }}</h3>
-                <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">{{ $story->description }}</p>
-                <div class="flex items-center justify-between text-sm text-gray-500 font-semibold pt-4 border-t border-gray-100">
-                    <span class="flex items-center gap-1">🧒 {{ $story->age_group }}</span>
-                    <span class="flex items-center gap-1">⏱️ {{ $story->duration_minutes }}m</span>
+            <div class="p-5 flex flex-col flex-grow">
+                <h3 class="text-xl font-bold text-stone-900 mb-2 font-serif-book line-clamp-2">{{ $story->title }}</h3>
+                <p class="text-stone-500 text-sm line-clamp-3 mb-4 flex-grow font-outfit">{{ $story->description }}</p>
+                <div class="flex items-center justify-between text-xs text-stone-500 font-semibold pt-4 border-t border-stone-100 font-outfit">
+                    <span>Ages {{ $story->age_group }}</span>
+                    <span>{{ $story->duration_minutes }} min read</span>
                 </div>
             </div>
         </a>
         @endforeach
     </div>
 
-    <div class="mt-12 flex justify-center">
+    <div class="mt-12 flex justify-center font-outfit">
         {{ $stories->links() }}
     </div>
 </div>
