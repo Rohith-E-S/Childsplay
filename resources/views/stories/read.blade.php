@@ -175,10 +175,19 @@
                                     }
                                 }());
 
-                                // Redirect after animation
-                                setTimeout(() => {
-                                    window.location.href = "{{ route('stories.show', $story) }}";
-                                }, 3500);
+                                // Save progress via AJAX, then redirect after animation
+                                fetch("{{ route('stories.progress', $story) }}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    }
+                                }).catch(err => console.error('Error saving progress:', err))
+                                .finally(() => {
+                                    setTimeout(() => {
+                                        window.location.href = "{{ route('stories.show', $story) }}";
+                                    }, 3500);
+                                });
                             }
                         });
                         

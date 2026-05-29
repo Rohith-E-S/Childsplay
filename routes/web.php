@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Parent features
+    Route::post('/children/switch', [ChildProfileController::class, 'switchActive'])->name('children.switch');
     Route::resource('children', ChildProfileController::class);
     Route::post('/children/{child}/streak/increment', [ChildProfileController::class, 'incrementStreak'])->name('children.streak.increment');
 

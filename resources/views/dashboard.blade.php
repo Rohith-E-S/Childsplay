@@ -10,12 +10,12 @@
         <h2 class="text-xl font-bold text-stone-850 mb-6 font-serif-book">Reader Profiles</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($children as $child)
-            <div class="bg-white rounded-lg p-6 border border-stone-200/80 shadow-sm relative overflow-hidden group flex flex-col justify-between">
+            <a href="{{ route('children.show', $child) }}" class="bg-white rounded-lg p-6 border border-stone-200/80 shadow-sm relative overflow-hidden group flex flex-col justify-between hover:border-indigo-300 transition-colors cursor-pointer block text-left">
                 <div>
                     <div class="flex items-center gap-4 mb-4">
                         <img src="{{ $child->avatar_url }}" alt="Avatar" class="w-16 h-16 rounded-full bg-stone-50 p-0.5 shadow-sm border border-stone-250/60">
                         <div>
-                            <h3 class="text-lg font-bold text-stone-900 font-serif-book">{{ $child->name }}</h3>
+                            <h3 class="text-lg font-bold text-stone-900 font-serif-book group-hover:text-indigo-900 transition-colors">{{ $child->name }}</h3>
                             <p class="text-stone-500 font-medium text-xs font-outfit uppercase tracking-wider">Age {{ $child->age }} | {{ $child->reading_level }}</p>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                         @endif
                     </div>
                 </div>
-            </div>
+            </a>
             @endforeach
 
             <!-- Add Child Card -->

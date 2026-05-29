@@ -16,6 +16,37 @@ class ChildProfileController extends Controller {
     }
 
     /**
+     * Switch the active child profile.
+     */
+    public function switchActive(Request $request)
+    {
+        $request->validate([
+            'child_profile_id' => 'required|exists:child_profiles,id',
+        ]);
+
+        $child = $request->user()->childProfiles()->findOrFail($request->child_profile_id);
+        session(['active_child_id' => $child->id]);
+
+        return back();
+    }
+
+    /**
+     * Display the specified child profile.
+     */
+    public function show(Request $request, ChildProfile $child)
+    {
+        if ($request->user()->id !== $child->user_id) {
+            abort(403);
+        }
+
+        $child->load(['readingHistories.story' => function ($query) {
+            $query->latest()->take(10);
+        }]);
+
+        return view('children.show', compact('child'));
+    }
+
+    /**
      * Increment the reading streak for a child profile.
      */
     public function incrementStreak(Request $request, ChildProfile $child)

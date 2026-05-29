@@ -28,6 +28,21 @@
                 <div class="hidden sm:flex sm:items-center sm:space-x-8">
                     <a href="{{ route('stories.index') }}" class="text-base font-semibold text-stone-600 hover:text-stone-900 transition-colors">Library</a>
                     @auth
+                        @php
+                            $childProfiles = Auth::user()->childProfiles ?? collect();
+                            $activeChildId = session('active_child_id');
+                        @endphp
+                        @if(Auth::user()->role !== 'admin' && $childProfiles->count() > 0)
+                            <form method="POST" action="{{ route('children.switch') }}" class="flex items-center">
+                                @csrf
+                                <select name="child_profile_id" onchange="this.form.submit()" class="text-base font-semibold text-stone-600 bg-transparent border-none outline-none cursor-pointer hover:text-stone-900 transition-colors focus:ring-0">
+                                    <option value="" disabled {{ !$activeChildId ? 'selected' : '' }}>Select Reader...</option>
+                                    @foreach($childProfiles as $profile)
+                                        <option value="{{ $profile->id }}" {{ $activeChildId == $profile->id ? 'selected' : '' }}>{{ $profile->name }}</option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        @endif
                         @if(Auth::user()->role === 'admin')
                             <a href="{{ route('admin.dashboard') }}" class="text-base font-semibold text-stone-600 hover:text-stone-900 transition-colors">Admin</a>
                         @else

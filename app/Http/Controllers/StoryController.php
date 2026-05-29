@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 use App\Models\Story;
 use App\Models\Category;
+use App\Models\ReadingHistory;
 use Illuminate\Http\Request;
 
 class StoryController extends Controller {
@@ -31,5 +32,21 @@ class StoryController extends Controller {
     public function read(Story $story) {
         $story->load('pages');
         return view('stories.read', compact('story'));
+    }
+
+    public function saveProgress(Request $request, Story $story) {
+        $childId = session('active_child_id');
+        
+        if (!$childId) {
+            return response()->json(['error' => 'No active child profile selected'], 400);
+        }
+
+        ReadingHistory::create([
+            'child_profile_id' => $childId,
+            'story_id' => $story->id,
+            'completed' => true,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 }
